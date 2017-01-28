@@ -287,6 +287,20 @@ output bsy;
 output err;
 
 
+// Register used to implement timeout.
+// The largest value that it will be set to,
+// is the clock cycle count equivalent of 250ms.
+// Since 250ms is 4 Hz, the number of clock
+// cycles using a clock frequency of CLKFREQ
+// would be CLKFREQ/4; the result of that
+// value would largely be greater than
+// (($SPIDATABITSIZE + 1) * (2 << $SCLKDIVIDELIMIT))
+// which is the minimum number of clock
+// cycles needed to reset spimaster; in fact
+// CLKFREQ must be at least 500 KHz.
+reg[clog2(CLKFREQ/4) -1 : 0] timeout;
+
+
 // Constants used with
 // the register state.
 
@@ -1791,7 +1805,10 @@ always @(posedge clk) begin
 					// a data packet.
 					
 					counter <= counter + 1'b1;
-				end
+					
+				end else if (timeout)
+					timeout <= timeout - 1'b1;
+				else state <= ERROR;
 				
 			end else begin
 				// If I get here, I receive
@@ -1841,7 +1858,10 @@ always @(posedge clk) begin
 			// otherwise look at the data
 			// packet that follow.
 			if (sdspirxbufferdataout[6:1]) state <= PREPCMD9;
-			else miscflag <= 1;
+			else begin
+				miscflag <= 1;
+				timeout <= -1;
+			end
 		end
 		
 	end else if (state == CMD9RESP) begin
@@ -1872,7 +1892,10 @@ always @(posedge clk) begin
 					// a data packet.
 					
 					counter <= counter + 1'b1;
-				end
+					
+				end else if (timeout)
+					timeout <= timeout - 1'b1;
+				else state <= ERROR;
 				
 			end else begin
 				// If I get here, I receive
@@ -1954,7 +1977,10 @@ always @(posedge clk) begin
 			// [0[5:0], x], otherwise look
 			// at the data packet that follow.
 			if (sdspirxbufferdataout[6:1]) state <= ERROR;
-			else miscflag <= 0;
+			else begin
+				miscflag <= 0;
+				timeout <= -1;
+			end
 		end
 		
 	end else if (state == CMD58RESP) begin
@@ -2067,7 +2093,10 @@ always @(posedge clk) begin
 					// a data packet.
 					
 					counter <= counter + 1'b1;
-				end
+					
+				end else if (timeout)
+					timeout <= timeout - 1'b1;
+				else state <= ERROR;
 				
 			end else begin
 				// If I get here, I receive
@@ -2145,7 +2174,10 @@ always @(posedge clk) begin
 			// [0[5:0], x], otherwise look
 			// at the data packet that follow.
 			if (sdspirxbufferdataout[6:1]) state <= ERROR;
-			else miscflag <= 0;
+			else begin
+				miscflag <= 0;
+				timeout <= -1;
+			end
 		end
 		
 	end else if (state == CMD24RESP) begin
