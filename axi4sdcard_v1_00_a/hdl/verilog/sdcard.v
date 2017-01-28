@@ -225,10 +225,10 @@ assign memmapsz = ((CACHESIZE*2)/4);
 
 
 // Memory interface operations.
-parameter MEMNOOP		= 2'b00;
-parameter MEMWRITEOP		= 2'b01;
-parameter MEMREADOP		= 2'b10;
-parameter MEMREADWRITEOP	= 2'b11;
+localparam MEMNOOP		= 2'b00;
+localparam MEMWRITEOP		= 2'b01;
+localparam MEMREADOP		= 2'b10;
+localparam MEMREADWRITEOP	= 2'b11;
 
 // Commands.
 parameter CMDRESET		= 0;

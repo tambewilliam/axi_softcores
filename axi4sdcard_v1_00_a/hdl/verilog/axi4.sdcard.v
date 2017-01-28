@@ -19,6 +19,9 @@ module axi4sdcard (
 	// Reset, active low.
 	S_AXI_ARESETN,
 	
+	// Interrupt request.
+	S_INTRQST,
+	
 	// Read address channel.
 	S_AXI_ARADDR,
 	S_AXI_ARVALID,
@@ -82,6 +85,7 @@ module axi4sdcard (
 	
 	input S_AXI_ACLK; // Clock.
 	input S_AXI_ARESETN; // Reset, active low.
+	output S_INTRQST; // Interrupt request.
 	
 	// Read address channel.
 	input[C_S_AXI_ADDR_WIDTH -1 : 0] S_AXI_ARADDR; // Read address.
@@ -302,7 +306,10 @@ module axi4sdcard (
 		.memdatain (S_AXI_WDATA),
 		.memdataout (S_AXI_RDATA),
 		.membyteselect (S_AXI_ARVALID ? RSTRB : S_AXI_WSTRB),
-		.memrdy (DEVRDY)
+		.memrdy (DEVRDY),
+		
+		.intrqst (S_INTRQST),
+		.intrdy (~S_INTRQST)
 	);
 	
 endmodule

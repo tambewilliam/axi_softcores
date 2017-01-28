@@ -317,10 +317,10 @@ assign memmapsz = (1 << SIZEOFMEMADDR);
 
 
 // Memory interface operations.
-parameter MEMNOOP		= 2'b00;
-parameter MEMWRITEOP		= 2'b01;
-parameter MEMREADOP		= 2'b10;
-parameter MEMREADWRITEOP	= 2'b11;
+localparam MEMNOOP		= 2'b00;
+localparam MEMWRITEOP		= 2'b01;
+localparam MEMREADOP		= 2'b10;
+localparam MEMREADWRITEOP	= 2'b11;
 
 
 // This register is set to 1,
